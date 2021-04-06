@@ -19,3 +19,7 @@ No son tan fáciles de traducir como la sintaxis. Para los símbolos yo uso y re
 ## Modificaciones
 
 También subí el archivo `tad.YAML-tmLanguage`, que pueden usar para modificar la definción de sintaxis de forma un poco más simple. Está escrito en el lenguage de TextMate, que es por estar deprecated en sublime es complicado encontrar documentación. Capaz les sirve [esta página](https://docs.sublimetext.io/reference/syntaxdefs_legacy.html).
+
+## Visual Studio Code
+
+Si alguien tiene ganas puede crear una extensión de vscode usando el archivo `tad.tmLanguage` y siguiendo los pasos en este [thread de StackOverflow](https://stackoverflow.com/questions/30687783/create-custom-language-in-visual-studio-code).

@@ -1,0 +1,218 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+
+scopeName: source.tad
+name: TAD
+fileTypes:
+  - tad
+limitLineLength: false
+patterns:
+  - include: '#comment'
+  - include: '#conditionals'
+  - include: '#strings'
+  - include: '#constants'
+  - include: '#constants_aux'
+  - include: '#arrays'
+  - include: '#cross_symbol'
+  - include: '#right_arrow_symbol'
+  - comment: Declaraciones de TADs auxiliares
+    match: |-
+      ((?:w*TAD*?))( .*? )(es|ES)( .*?(?=( |
+      |<|\(|{)))
+    captures:
+      '1':
+        name: keyword.operator.tad
+      '2':
+        name: variable.other.tad
+      '3':
+        name: keyword.operator.tad
+      '4':
+        name: storage.modifier.tad
+  - comment: Highligting para Tupla<...> en declaraciones
+    name: meta.angle-brackets
+    begin: <|\(
+    end: '>|\)'
+    beginCaptures:
+      '0':
+        name: punctuation.section.parens.begin.tad
+    endCaptures:
+      '0':
+        name: punctuation.section.parens.end.tad
+    patterns:
+      - match: '[A-Z].*?( |(?=\)))'
+        name: storage.modifier.tad
+  - comment: Declaracion de TAD principal
+    match: |-
+      ((?:w*TAD*?))( .*?\((.*?(?=\))).*?\)| .*?
+      )
+    captures:
+      '1':
+        name: keyword.operator.tad
+      '2':
+        name: variable.other.tad
+      '3':
+        name: storage.modifier.tad
+  - comment: Seccion Extiende del header
+    match: "(?i)(w*(EXTIENDE)( |:|\t|\n))( .*?\\((.*?(?=\\))).*?\\))"
+    captures:
+      '1':
+        name: keyword.operator.tad
+      '4':
+        name: variable.other.tad
+      '5':
+        name: storage.modifier.tad
+  - comment: Palabras clave de los TADS
+    name: keyword.operator.tad
+    match: "(?i)(w*(?:EXPORTA|IMPORTA|par[a,á]metros formales|g[e,é]neros|GENERADORES|Observadores B[a,á]sicos|OBSERVADORES|Otras Operaciones|Otras Op|OtrasOp|USA|GEN|OBS)( |:|\t|\n))"
+  - comment: Seccion de Igualdad observacional
+    begin: '(?i)(w*(?:Igualdad Observacional|IgObs|Ig Obs)( |:|\t|\n))'
+    end: >-
+      ((;))|(?i)(w*(?=EXTIENDE|EXPORTA|IMPORTA|g[e,é]neros|GENERADORES|Observadores
+      B[a,á]sicos|OBSERVADORES|USA|usa|Usa|GEN|gen|Gen|OBS|obs|Obs))
+    beginCaptures:
+      '0':
+        name: keyword.operator.tad
+    endCaptures:
+      '2':
+        name: comment.line.tad.tad
+    patterns:
+      - include: '#comment'
+      - include: '#functions'
+      - include: '#strings'
+      - include: '#constants'
+      - include: '#constants_aux'
+      - include: '#arrays'
+      - include: '#equal_obs_symbol'
+      - include: '#iff_symbol'
+      - include: '#logic_symbols'
+  - comment: Parte de Axiomas
+    begin: "(?i)w*AXIOMAS( |:|\t|\n)"
+    beginCaptures:
+      '0':
+        name: keyword.operator.tad
+    end: Fin TAD
+    endCaptures:
+      '0':
+        name: keyword.operator.tad
+    patterns:
+      - name: string.quoted.double.tad
+        match: '".*?"'
+      - include: '#comment'
+      - include: '#conditionals'
+      - include: '#strings'
+      - include: '#logic_symbols'
+      - include: '#arrays'
+      - include: '#functions'
+      - include: '#constants'
+      - include: '#constants_aux'
+      - include: '#equal_symbol'
+      - comment: Atributos para los tipo Tupla
+        match: '(?:\..*?)([a-z]+)'
+        captures:
+          '1':
+            name: variable.parameter.tad
+  - comment: Aridad de Funciones (Nombre de funcion)
+    match: "(^(?:\t\t| {8}))(?!//)([A-zÀ-ú0-9_?#ñØ\\+•·\\-≤ ]+:)"
+    name: entity.name.function.tad
+  - comment: Llaves para restricciones
+    begin: '{'
+    beginCaptures:
+      '0':
+        name: keyword.control.conditional.tad
+    end: |-
+      }
+      |(?=//)
+    endCaptures:
+      '0':
+        name: keyword.control.conditional.tad
+    patterns:
+      - include: '#comment'
+      - include: '#constants'
+      - include: '#strings'
+      - include: '#constants'
+      - include: '#constants_aux'
+      - include: '#arrays'
+      - include: '#functions'
+      - include: '#equal_symbol'
+      - include: '#iff_symbol'
+      - include: '#logic_symbols'
+      - comment: Llave si hay comentario
+        name: keyword.control.conditional.tad
+        match: '}(.*?)(?=//)'
+repository:
+  conditionals:
+    comment: Palabras clave del tipo Bool
+    name: keyword.control.conditional.tad
+    match: "(?i)((\t| |\n)(IF|FI|ELSE|ELIF|THEN)(\t| |\n))"
+  comment:
+    comment: Comentario del codigo
+    name: comment.line.tad
+    match: //.*$
+  strings:
+    comment: Strings (palabras entre comillas)
+    name: string.quoted.double.tad
+    match: '".*?"'
+  functions:
+    comment: Highligting de nombres de funciones varias
+    match: "(?:\\(| |\t|\\+|-|)([A-zÀ-ú0-9_?#ñØ]+?)(?=(\\(| \\())"
+    captures:
+      '1':
+        name: entity.name.function.tad
+  functions_symbols:
+    comment: Simbolos de funciones de los TADs basicos
+    name: entity.name.tad
+    match: (•|◦|\+|\-|β|π|≤|≥|&|⊂|⊆|∈|∩|∪|←)
+  logic_symbols:
+    comment: Simbolos de funciones condicionales
+    name: keyword.control.conditional.tad
+    match: '(⇒|=>)L|(∨L|∧L|∨|∧|¬|(∀.*?:)|∀|∃|∄|⇒|=>|⇐|<=)'
+  constants:
+    comment: Constantes
+    name: constant.language.tad
+    match: '(?i)(\b(true|false|none|Ø|nil|[0-9])\b)'
+  constants_aux:
+    comment: Constante <>
+    name: constant.language.tad
+    match: <>
+  arrays:
+    comment: Arrays
+    begin: '\['
+    end: '\]'
+    beginCaptures:
+      '0':
+        name: punctuation.section.brackets.begin.tad
+    endCaptures:
+      '0':
+        name: punctuation.section.brackets.end.tad
+    patterns:
+      - match: '^([0-9]+?)(?=\])'
+        name: constant.numeric.tad
+      - comment: es necesario cuando hay una funcion adentro
+        name: keyword.control.conditional.tad
+        match: '\['
+      - include: '#conditionals'
+      - include: '#strings'
+      - include: '#logic_symbols'
+      - include: '#functions'
+      - include: '#constants'
+      - include: '#constants_aux'
+      - include: '#functions_symbols'
+  cross_symbol:
+    comment: Highligting para signo "x"
+    name: variable.language.tad
+    match: "(?: |\t)(?:x|×)(?: |\t)"
+  right_arrow_symbol:
+    comment: Highligting para signo "->"
+    name: variable.language.tad
+    match: '((?:->|↦|→))'
+  equal_symbol:
+    comment: Highligting para signo "="
+    match: "( |\t|\n)(=|≡)(?=( |\t))"
+    name: variable.language.tad
+  iff_symbol:
+    comment: Highligting para signo "<=>"
+    name: variable.language.tad
+    match: '(?:↔|<=>|<\->|⇔|⇐⇒)'
+  equal_obs_symbol:
+    comment: Highligting para signo "=obs"
+    match: "( |\t)(=obs)(?=( |\t))"
+    name: variable.language.tad

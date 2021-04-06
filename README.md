@@ -14,7 +14,7 @@ Una traducción casi exacta de la sintaxis de [este paquete](https://github.com/
 
 ## Snippets?
 
-No son tan fáciles de traducir como la sintaxis. Para los símbolos yo uso y recomiendo el paquete [`UnicodeMath`](https://github.com/mvoidex/UnicodeMath). Faltarían algunos, como los esqueletos, y capaz en algún momento los meto.
+No son tan fáciles de traducir como la sintaxis. Para los símbolos yo uso y recomiendo el paquete [`UnicodeMath`](https://github.com/mvoidex/UnicodeMath). Faltarían algunos snippets como los esqueletos, y capaz en algún momento los meto.
 
 ## Modificaciones
 

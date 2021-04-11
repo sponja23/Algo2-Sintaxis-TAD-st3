@@ -1,6 +1,6 @@
 # Sintaxis para escribir TADs en Sublime Text
 
-Una traducción casi exacta de la sintaxis de [este paquete](https://github.com/luisbustamante097/language-tad-aed2) para Atom. Solo cambié algunos colores para que queden bien en Sublime.
+Un paquete de sublime text para escribir los TADs de Algo2.
 
 
 ![Imagen](./imagenes/ejemplo.png)
@@ -9,17 +9,12 @@ Una traducción casi exacta de la sintaxis de [este paquete](https://github.com/
 ## Instalación
 
 1. Instalar [Sublime Text 3](https://www.sublimetext.com/3).
-2. Descargar el archivo `tad.tmLanguage`.
+2. Descargar el archivo `TAD.sublime-syntax`.
 3. Ponerlo en la carpeta de Sublime `Packages/User`. Para abrirla en el explorador pueden usar el menú de Sublime: `Preferences > Browse Packages...`.
 
-## Snippets?
+Si habían instalado el archivo `tad.tmLanguage`, bórrenlo.
 
-No son tan fáciles de traducir como la sintaxis. Para los símbolos yo uso y recomiendo el paquete [`UnicodeMath`](https://github.com/mvoidex/UnicodeMath). Faltarían algunos snippets como los esqueletos, y capaz en algún momento los meto.
-
-## Modificaciones
-
-También subí el archivo `tad.YAML-tmLanguage`, que pueden usar para modificar la definción de sintaxis de forma un poco más simple. Está escrito en el lenguage de TextMate, que es por estar deprecated en sublime es complicado encontrar documentación. Capaz les sirve [esta página](https://docs.sublimetext.io/reference/syntaxdefs_legacy.html).
 
 ## Visual Studio Code
 
-Si alguien tiene ganas puede crear una extensión de vscode usando el archivo `tad.tmLanguage` y siguiendo los pasos en este [thread de StackOverflow](https://stackoverflow.com/questions/30687783/create-custom-language-in-visual-studio-code).
+Si alguien tiene ganas puede crear una extensión de vscode usando el archivo `tad.tmLanguage` en la carpeta `legacy` y siguiendo los pasos en este [thread de StackOverflow](https://stackoverflow.com/questions/30687783/create-custom-language-in-visual-studio-code).

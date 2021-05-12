@@ -1,6 +1,6 @@
 # Sintaxis para escribir TADs en Sublime Text
 
-Un paquete de sublime text para escribir los TADs de Algo2.
+Un paquete de sublime text para escribir los TADs y sus aspectos de diseño.
 
 
 ![Imagen](./imagenes/ejemplo.png)

@@ -3,7 +3,9 @@
 Un paquete de sublime text para escribir los TADs y sus aspectos de diseño.
 
 
-![Imagen](./imagenes/ejemplo.png)
+![Imagen](./imagenes/ejemplo_tad.png)
+
+![Imagen](./imagenes/ejemplo_design.jpeg)
 
 
 ## Instalación

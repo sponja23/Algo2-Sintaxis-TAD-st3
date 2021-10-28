@@ -1,0 +1,56 @@
+// Robot
+
+TAD Coordenada ES Tupla(int × int)
+
+TAD Robot
+
+    
+    géneros: robot
+
+    usa: nat, coordenada, CantidadApariciones
+    exporta:  Ubicar, Arriba, Abajo, Derecha, Izquierda, PosiciónActual, CuántasVecesPasó, MásALaDerecha
+
+    igualdad observacional:
+        (∀r₁, r₂ : robot)(r₁ =obs r₂ ⇔ (Trayectoria(r₁) =obs Trayectoria(r₂)))
+
+    observadores básicos:
+        Trayectoria: robot → secu(coordenada)
+
+    generadores:
+        Ubicar: coordenada → robot
+        Arriba: robot r → robot
+        Abajo: robot r → robot
+        Derecha: robot r → robot
+        Izquierda: robot r → robot
+
+    otras operaciones:
+        PosiciónActual: robot → coordenada
+        CuántasVecesPasó: coordenada × robot → nat
+        MásALaDerecha: robot → coordenada
+
+        MayorSegundaCoordenada: secu(coordenada) s → coordenada
+            { ¬vacía(s) }
+
+    axiomas:
+        Trayectoria(Ubicar(c))    ≡ c ∙ <>
+        Trayectoria(Arriba(r))    ≡ ⟨π₁(PosiciónActual(r)), π₂(PosiciónActual(r)) + 1⟩ ∙ Trayectoria(r)
+        Trayectoria(Abajo(r))     ≡ ⟨π₁(PosiciónActual(r)), π₂(PosiciónActual(r)) - 1⟩ ∙ Trayectoria(r)
+        Trayectoria(Derecha(r))   ≡ ⟨π₁(PosiciónActual(r)) + 1, π₂(PosiciónActual(r))⟩ ∙ Trayectoria(r)
+        Trayectoria(Izquierda(r)) ≡ ⟨π₁(PosiciónActual(r)) - 1, π₂(PosiciónActual(r))⟩ ∙ Trayectoria(r)
+
+        PosiciónActual(r) ≡ prim(Trayectoria(r))
+
+        CuántasVecesPasó(r, c) ≡ CantidadApariciones(Trayectoria(r), c)
+
+        MayorSegundaCoordenada(s) = if vacía(fin(s))
+                                      then prim(s)
+                                      else
+                                        if π₂(prim(s)) > π₂(MayorSegundaCoordenada(fin(s)))
+                                          then prim(s)
+                                          else MayorSegundaCoordenada(fin(s))
+                                        fi
+                                    fi
+
+        MásALaDerecha(r) ≡ MayorSegundaCoordenada(Trayectoria(r))
+
+Fin TAD

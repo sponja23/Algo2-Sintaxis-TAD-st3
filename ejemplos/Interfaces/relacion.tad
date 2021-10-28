@@ -1,0 +1,68 @@
+// Relación
+
+representación:
+    relacion se representa con estr, donde
+        estr es tupla⟨
+            ida: arreglo[0 ... 100] de conj(nat),
+            vuelta: arreglo[0 ... 100] de conj(nat)
+        ⟩
+
+invariante de representación:
+    Rep: estr → bool
+    (∀e: estr) Rep(e) ≡ true ⇔ (∀x, y: nat)((x ≤ 100 ∧ y ≤ 100 ⇒L) (
+            (Definido?(e.ida, x) ∧ Definido?(e.vuelta, x) ∧ Definido?(e.ida, y) ∧ Definido?(e.vuelta, y)) ∧L
+            (y ∈ e.ida[x] ⇔ x ∈ e.vuelta[y])
+        ))
+
+función de abstracción:
+    Abs: estr e → relacion { Rep(e) }
+    (∀e: estr) Abs(e) =obs r | (∀x, y: nat)((x ≤ 100 ∧ y ≤ 100) ⇒L estánRelacionados?(r, x, y) ⇔ (y ∈ e.ida[x] ∧  x ∈ e.vuelta[y]))
+
+Interfaz
+
+    se explica con: Relación
+
+    géneros: relacion
+
+    operaciones:
+        Nueva() → res: relacion
+        Pre ≡ { true }
+        Post ≡ { res = nueva }
+
+        Relacionar(in/out r: relacion, in x: nat, in y: nat)
+        Pre ≡ { x ≤ 100 ∧ y ≤ 100 ∧ r = R₀ }
+        Post ≡ { r = relacionar(R₀, x, y) }
+
+        EstánRelacionados?(in r: relacion, in x: nat, in y: nat) → res: bool
+        Pre ≡ { x ≤ 100 ∧ y ≤ 100 }
+        Post ≡ { res = estánRelacionados?(r, x, y) }
+
+        Relacionados(in r: relacion, in n: nat) → res: conj(nat)
+        Pre ≡ { n ≤ 100 }
+        Post ≡ { (∀k: nat)((k ≤ 100) ⇒L (k ∈ res ⇔ estánRelacionados?(r, n, k))) }
+
+        Relacionantes(in r: relacion, in n: nat) → res: conj(nat)
+        Pre ≡ { n ≤ 100 }
+        Post ≡ { (∀k: nat)((k ≤ 100 ∧ k ∈ res) ⇒L estánRelacionados?(r, k, n)) }
+
+    algoritmos:
+        iNueva() → res: estr
+            for i ← 0 ... 100
+                res.ida[i] ← Vacío()
+                res.vuelta[i] ← Vacío()
+            end
+
+        iRelacionar(in/out e: estr, in x: nat, in y: nat)
+            Agregar(e.ida[x], y)
+            Agregar(e.vuelta[y], x)
+
+        iEstánRelacionados?(in e: estr, in x: nat, in y: nat) → res: bool
+            res ← Pertenece?(e.ida[x], y)
+
+        iRelacionados(in e: estr, in n: nat) → res: conj(nat)
+            res ← e.ida[n]
+
+        iRelacionantes(in e: estr, in n: nat) → res: conj(nat)
+            res ← e.vuelta[n]
+
+Fin Interfaz

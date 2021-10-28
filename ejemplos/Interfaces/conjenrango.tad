@@ -1,0 +1,84 @@
+// Conjunto en rango
+
+representación:
+    conjenrango se representa con estr, donde
+        estr es tupla⟨
+            está?: arreglo_dimensionable de bool,
+            ínfimo: nat,
+            supremo: nat
+        ⟩
+
+invariante de representación:
+    Rep: estr → bool
+    (∀e: estr) Rep(e) ≡ true ⇔ (1) ∧ (2) ∧ (3)
+        donde:
+            (1) ≡ e.ínfimo ≤ e.supremo
+            (2) ≡ tam(e.está) = e.supremo - e.ínfimo + 1
+            (3) ≡ (∀i: nat)(0 ≤ i < tam(e.está) ⇒L definido?(i, e.está))
+
+función de abstracción:
+    Abs: estr e → conjenrango { Rep(e) }
+    (∀e: estr) Abs(e) =obs c | (1) ∧ (2) ∧ (3)
+        donde:
+            (1) ≡ e.ínfimo = lower(c)
+            (2) ≡ e.supremo = upper(c)
+            (3) ≡ (∀n: nat)(lower(c) ≤ n ≤ upper(c) ⇒L (n ∈ c ⇔ e.está?[n - e.ínfimo]))
+
+Interfaz
+
+    se explica con: ConjuntoDeNaturalesEnRango
+
+    géneros: conjenrango
+
+    operaciones:
+        Vacío(in ínf: nat, in sup: nat) → res: conjenrango
+        Pre ≡ { ínf ≤ sup }
+        Post ≡ { res = ∅(ínf, sup) }
+        Complejidad: Θ(sup - ínf + 1)
+
+        Agregar(in/out c: conjenrango, in elem: nat)
+        Pre ≡ { lower(c) ≤ elem ≤ upper(c) ∧ c = C₀ }
+        Post ≡ { c = Ag(elem, C₀) }
+
+        Pertenece?(in c: conjenrango, in elem: nat) → res: bool
+        Pre ≡ { true }
+        Post ≡ { res = elem ∈ c }
+        Complejidad: Θ(1)
+
+        Ínfimo(in c: conjenrango) → res: nat
+        Pre ≡ { true }
+        Post ≡ { res = lower(c) }
+        Complejidad: Θ(1)
+
+        Supremo(in c: conjenrango) → res: nat
+        Pre ≡ { true }
+        Post ≡ { res = upper(c) }
+        Complejidad: Θ(1)
+
+    algoritmos:
+        iVacío(in ínf: nat, in sup: nat) → res: estr
+            res.ínfimo ← ínf
+            res.supremo ← sup
+            
+            res.está? ← CrearArreglo(sup - ínf + 1)
+            for n ← ínf ... sup
+                res.está?[n - ínf] ← false
+            end
+
+        iAgregar(in/out e: estr, in elem: nat)
+            res.está?[elem - e.ínfimo] ← true
+
+        iPertenece?(in e: estr, in elem: nat) → res: bool
+            if e.ínfimo ≤ elem ≤ e.supremo
+                res ← e.está?[elem - ínf]
+            else
+                res ← false
+            end
+
+        iÍnfimo(in e: estr) → res: nat
+            res ← e.ínfimo
+
+        iSupremo(in e: estr) → res: nat
+            res ← e.supremo
+
+Fin Interfaz

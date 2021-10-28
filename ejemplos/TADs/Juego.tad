@@ -1,0 +1,131 @@
+// Juego
+
+moverPosición: posición × dirección → posición
+moverPosición(p, Arriba) ≡ ⟨
+    π₁(p),
+    if π₂(p) = 63 then 0 else π₂(p) + 1 fi
+⟩
+moverPosición(p, Abajo) ≡ ⟨
+    π₁(p),
+    if π₂(p) = 0 then 63 else π₂(p) - 1 fi
+⟩
+moverPosición(p, Derecha) ≡ ⟨
+    if π₁(p) = 63 then 0 else π₁(p) + 1 fi,
+    π₂(p)
+⟩
+moverPosición(p, Abajo) ≡ ⟨
+    if π₁(p) = 0 then 63 else π₁(p) - 1 fi,
+    π₂(p)
+⟩
+
+posiciónVálida?: posición → bool
+posiciónVálida?(p) ≡ π₁(p) < 64 ∧ π₂(p) < 64
+
+TAD Movimiento
+
+    géneros: movimiento
+
+    generadores:
+        avance: → movimiento
+        giro: dirección → movimiento
+
+    observadores básicos:
+        esAvance?: movimiento → bool
+        esGiro?: movimiento → bool
+        dirMovimiento: movimiento m → dirección
+            { esGiro?(m) }
+
+Fin TAD
+
+TAD Juego
+
+    géneros: juego
+
+    generadores:
+        nuevoJuego: → juego
+        agregarJugador: juego j × jugador ju × posición p × dirección → juego
+            { ¬empezó?(j) ∧ ¬(ju ∈ jugadores(j)) ∧ posiciónVálida(p) ∧ ¬hayJugadorEnPos?(j, p) }
+        jugarTurno: juego j × jugador ju × movimiento m → juego
+            { empezó?(j) ∧ ¬terminó?(j) ∧ ju ∈ jugadores(j) ∧ (esGiro?(m) ⇒L ¬(dirMovimiento(m) = dirJugador(ju))) }
+
+    observadores básicos:
+        jugadores: juego → conj(jugador)
+        empezó?: juego → bool
+        posJugador: juego j × jugador ju → posición
+            { ju ∈ jugadores(j) }
+        dirJugador: juego j × jugador ju → dirección
+            { ju ∈ jugadores(j) }
+        puntajeJugador: juego j × jugador → puntaje
+            { ju ∈ jugadores(j) }
+
+    otras operaciones:
+        posiciónResultante: juego j × jugador ju × movimiento m → posición
+
+        hayJugadorEnPos?: juego × posición → bool
+        algunoEnPos?: juego j × conj(jugador) × posición → bool
+
+        jugadorEnPos: juego j × posición p → jugador
+            { hayJugadorEnPos?(j, p) }
+
+        deConjEnPos: juego j × conj(jugador) cj × posición p → jugador
+            { cj ⊆ jugadores(j) ∧ (∃ju: jugador)(ju ∈ cj ∧ posJugador(j, ju) = p) }
+
+        terminó?: juego → bool
+        algunoCon>32?: juego × cj → bool
+
+        ganador: juego → jugador
+        deConjGanador: juego × conj(jugador) cj → jugador
+
+    axiomas:
+        jugadores(nuevoJuego) ≡ ∅
+        jugadores(agregarJugador(j, ju, p, d)) ≡ Ag(ju, jugadores(j))
+        jugadores(jugarTurno(j, ju, m)) ≡ if esAvance?(m) ∧ ¬hayJugadorEnPos?(posiciónResultante(j, ju, m))
+                                            then jugadores(j) - {jugadorEnPos(posiciónResultante(j, ju, m))}
+                                            else jugadores(j)
+                                          fi
+
+        empezó?(nuevoJuego) ≡ false
+        empezó?(agregarJugador(j, ju, p, d)) ≡ if #(jugadores(j)) + 1 = 64 then true else false fi
+        empezó?(jugarTurno(j, ju, m)) ≡ true
+
+        posJugador(agregarJugador(j, ju, p, d), ju') ≡ if ju = ju' then p else posJugador(j, ju') fi
+        posJugador(jugarTurno(j, ju, m), ju') ≡ if ju = ju'
+                                                  then posiciónResultante(j, ju, m)
+                                                  else posJugador(j, ju')
+                                                fi
+
+        dirJugador(agregarJugador(j, ju, p, d), ju') ≡ if ju = ju' then d else dirJugador(j, ju') fi
+        dirJugador(jugarTurno(j, ju, m), ju') ≡ if ju = ju' ∧ esGiro?(m)
+                                                  then dirMovimiento(m)
+                                                  else dirJugador(j, ju')
+                                                fi
+
+        puntajeJugador(agregarJugador(j, ju, p, d), ju') ≡ 0 // No empezó el juego: nadie se comió a nadie
+        puntajeJugador(jugarTurno(j, ju, m), ju') ≡ puntajeJugador(j, ju') + (if ju = ju' ∧ hayJugadorEnPos?(posiciónResultante(j, ju, m))
+                                                                                then puntajeJugador(jugadorEnPos(posiciónResultante(j, ju, m))) + 1
+                                                                                else 0
+                                                                              fi)
+
+        posiciónResultante(j, ju, m) ≡ if esGiro?(m)
+                                         then posJugador(j, ju)
+                                         else moverPosición(posJugador(j, ju), dirJugador(j, ju))
+                                       fi
+        
+        hayJugadorEnPos?(j, p) ≡ algunoEnPos?(j, jugadores(j), p)
+        algunoEnPos?(j, cj, p) ≡ ¬∅?(cj) ∧L (posJugador(j, dameUno(cj)) = p ∨ algunoEnPos?(j, sinUno(cj), p))
+
+        jugadorEnPos(j, p) ≡ deConjEnPos(j, jugadores(j), p)
+        deConjEnPos(j, cj, p) ≡ if posJugador(j, dameUno(cj)) = p
+                                  then dameUno(cj)
+                                  else deConjEnPos(j, sinUno(cj), p)
+                                fi
+
+        terminó?(j) ≡ algunoCon>32?(j, jugadores(j))
+        algunoCon>32?(j, cj) ≡ ¬∅?(cj) ∧L (puntajeJugador(j, dameUno(cj)) > 32 ∨ algunoCon>32?(j, sinUno(cj), p))
+
+        ganador(j) ≡ deConjGanador(j, jugadores(j))
+        deConjGanador(j) ≡ if puntaje(j, dameUno(cj)) > 32
+                             then dameUno(cj)
+                             else deConjGanador(j, sinUno(cj))
+                           fi
+Fin TAD

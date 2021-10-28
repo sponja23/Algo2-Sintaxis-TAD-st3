@@ -1,0 +1,73 @@
+// Texto
+
+representación:
+    texto se representa con estr, donde
+        estr es tupla⟨
+            palabras: vector(palabra),
+            apariciones: diccTrie(palabra, lista(itVector(palabra))),
+            másRepetidas: conjTrie(palabra),
+            máxApariciones: nat
+        ⟩
+
+solución informal:
+
+    * palabras: es un vector de palabras. Los vectores se caracterizan por tener acceso O(1) a cualquier posición a través de su índice,
+      e inserción al final en O(1) (amortizado).
+    * apariciones: es un diccionario de palabras a listas de iteradores al vector "palabras", implementado con un Trie. El Trie tiene 
+      operaciones O(|k|), donde |k| es la clave más larga, que en este caso es constante.
+    * másRepetidas: un conjunto de palabras, implementado con un Trie. (Ídem)
+
+algoritmos:
+    iSubtexto(in inicio: nat, in fin: nat, in e: estr) → res: estr
+        res.palabras ← Vacío()
+        res.apariciones ← Vacío()
+        res.másRepetidas ← Vacío()
+        res.máxApariciones ← 0
+        máxApariciones ← 0
+
+        for i ← inicio ... fin // fin - inicio + 1 iteraciones
+            palabra ← e[i]
+            it ← AgregarAtrás(res.palabras, palabra) // O(1) (amortizado)
+            if Definido?(res.apariciones, palabra) // O(1)
+                AgregarAtrás(Significado(res.apariciones, palabra), it) // O(1)
+            else
+                var l: lista
+                l ← Vacía()
+                AgregarAtrás(l, it)
+                Definir(res.apariciones, palabra, l) // O(1)
+            end
+            apariciones ← Longitud(Significado(res.apariciones, palabra)) // O(1)
+            if apariciones = res.máxApariciones
+                Agregar(res.másRepetidas, palabra) // O(1)
+            else if apariciones > res.máxApariciones
+                res.máxApariciones ← apariciones
+                res.másRepetidas ← Vacía()
+                Agregar(res.másRepetidas, palabra) // O(1)
+            end
+        end
+        // Complejidad: (fin - inicio + 1) * O(1) = O(fin - inicio)
+
+    iCambiarPalabra(in anterior: palabra, in nueva: palabra, in/out e: estr)
+        if Definido?(e.apariciones, anterior)
+            it ← CrearIt(Significado(e.apariciones, anterior)) // O(1)
+            while HaySiguiente?(it) // k iteraciones
+                itTexto ← Siguiente(it)
+                Siguiente(itTexto) ← nueva
+                AgregarAtrás(Significado(res.apariciones, nueva), itTexto) // O(1)
+                Avanzar(it)
+            end
+            apariciones ← Longitud(Significado(res.apariciones, nueva)) // O(1)
+            if apariciones = res.máxApariciones
+                Agregar(res.másRepetidas, palabra) // O(1)
+            else if apariciones > res.máxApariciones
+                res.máxApariciones ← apariciones
+                res.másRepetidas ← Vacía()
+                Agregar(res.másRepetidas, palabra) // O(1)
+            end
+        end
+        // Complejidad: k * O(1) = O(k)
+
+    iPalabrasMásRepetidas(in e: estr) → res: conjTrie(palabras)
+        res ← e.másRepetidas
+        // Complejidad: O(1)
+        // res es un alias de e.másRepetidas

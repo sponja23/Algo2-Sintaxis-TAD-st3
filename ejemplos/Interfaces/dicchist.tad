@@ -1,0 +1,95 @@
+// Diccionario con historia
+
+representación:
+    dicchist se representa con estr, donde
+        estr es dicc(κ, pila(σ))
+
+invariante de representación:
+    Rep: estr → bool
+    (∀e: estr) Rep(e) ≡ true ⇔ (∀k: κ)(def?(k, e) ⇒L longitud(obtener(k, e)) ≥ 1)
+
+función de abstracción:
+    Abs: estr e → dicchist { Rep(e) }
+    (∀e: estr) Abs(e) =obs d | (∀k: κ)(
+            Definido?(k, d) = def?(k, e) ∧L
+            (Definido?(k, d) ⇒L (
+                Significado(k, d) = tope(obtener(k, e)) ∧
+                BorrarSignificado(k, d) = if longitud(obtener(k, e)) > 1
+                                            then definir(k, desapilar(obtener(k, e)), e)
+                                            else borrar(k, e)
+                                          fi
+            ))
+        )
+
+Interfaz
+
+    parámetros formales:
+        géneros: κ, σ
+        funciones:
+            =(in x: κ, in y: κ) → res: bool
+            Pre ≡ { true }
+            Post ≡ { res = (x = y) }
+
+    se explica con: DiccionarioConHistoria
+
+    géneros: dicchist
+
+    operaciones:
+        Vacío() → res: dicchist
+        Pre ≡ { true }
+        Post ≡ { res = vacío }
+        Complejidad: Θ(1)
+
+        Definir(in/out d: dicchist, in k: κ, in s: σ)
+        Pre ≡ { d = D₀ }
+        Post ≡ { d = Definir(k, s, d) }
+        Complejidad: Θ(n)
+
+        Definido?(in d: dicchist, in k: κ) → res: bool
+        Pre ≡ { true }
+        Post ≡ { res = Definido?(k, d) }
+        Complejidad: Θ(n)
+
+        Significado(in d: dicchist, in k: κ) → res: σ
+        Pre ≡ { Definido?(k, d) }
+        Post ≡ { res = Significado(k, d) }
+        Complejidad: Θ(n)
+
+        BorrarSignificado(in/out d: dicchist, in k: κ)
+        Pre ≡ { Definido?(k, d) ∧ d = D₀ }
+        Post ≡ { d = BorrarSignificado(k, D₀) }
+
+        CantSignificados(in d: dicchist, in k: κ) → res: nat
+        Pre ≡ { Definido?(k, d) }
+        Post ≡ { res = CantSignificados(k, d) }
+
+    algoritmos:
+        iVacío() → res: estr
+            res ← Vacío()
+
+        iDefinir(in/out e: estr, in k: κ, in s: σ)
+            if Definido?(e, k) // O(n)
+                Apilar(Significado(e, k), s) // Significado es O(n)
+            else
+                nuevaPila ← Apilar(Vacía(), s)
+                Definir(e, k, nuevaPila) // O(n)
+            end
+
+        iDefinido?(in e: estr, in k: κ) → res: bool
+            res ← Definido?(e, k) // O(n)
+
+        iSignificado(in e: estr, in k: κ) → res: σ
+            res ← Tope(Significado(e, k)) // Significado es O(n)
+
+        iBorrarSignificado(in/out e: dicchist, in k: κ)
+            pila ← Significado(e, k) // O(n)
+            if Longitud(pila) > 1
+                Desapilar(pila)
+            else
+                Borrar(e, k)
+            end
+
+        iCantSignificados(in e: dicchist, in k: κ) → res: nat
+            res ← Longitud(Significado(e, k)) // Significado es O(n)
+
+Fin Interfaz

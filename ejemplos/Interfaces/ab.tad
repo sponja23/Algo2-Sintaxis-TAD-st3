@@ -1,0 +1,116 @@
+// Árbol binario
+
+representación:
+    ab se representa con estr, donde
+        estr es puntero(tupla⟨
+            valor: α,
+            izq: puntero(ab(α)),
+            der: puntero(ab(α))
+        ⟩)
+
+invariante de representación:
+    Rep: estr → bool
+    (∀e: estr) Rep(e) ≡ true
+
+función de abstracción:
+    Abs: estr e → ab(α) { Rep(e) }
+    (∀e: estr) Abs(e) =obs if e = NULL
+                             then nil
+                             else bin((*e).valor, Abs((*e).izq), Abs((*e).der))
+                           fi
+
+Interfaz
+
+    parámetros formales:
+        géneros: α
+
+    se explica con: ÁrbolBinario(α)
+
+    géneros: ab(α)
+
+    operaciones:
+        Nil() → res: ab(α)
+        Pre ≡ { true }
+        Post ≡ { res = nil }
+        Complejidad: Θ(1)
+
+        Bin(in valor: α, in izq: ab(α), in der: ab(α)) → res: ab(α)
+        Pre ≡ { true }
+        Post ≡ { res = bin(valor, izq, der) }
+        Complejidad: Θ(1)
+
+        Nil?(in a: ab(α)) → res: bool
+        Pre ≡ { true }
+        Post ≡ { res = nil?(a) }
+        Complejidad: Θ(1)
+
+        Raíz(in a: ab(α)) → res: α
+        Pre ≡ { ¬nil?(a) }
+        Post ≡ { res = raíz(a) }
+        Complejidad: Θ(1)
+
+        Izq(in a: ab(α)) → res: ab(α)
+        Pre ≡ { ¬nil?(a) }
+        Post ≡ { res = izq(a) }
+        Complejidad: Θ(1)
+        Aliasing: res es una referencia al subárbol izquierdo de a.
+
+        Der(in a: ab(α)) → res: ab(α)
+        Pre ≡ { ¬nil?(a) }
+        Post ≡ { res = der(a) }
+        Complejidad: Θ(1)
+        Aliasing: res es una referencia al subárbol derecho de a.
+
+        Altura(in a: ab(α)) → res: nat
+        Pre ≡ { true }
+        Post ≡ { res = h(a) }
+        Complejidad: Θ(n)
+
+        NivelCompleto?(in a: ab(α), in n: nat) → res: bool
+        Pre ≡ { n ≤ h(a) }
+        Post ≡ { res = NivelCompleto?(a, n) }
+        Complejidad: Θ(n)
+
+        Completo?(in a: ab(α)) → res: bool
+        Pre ≡ { true }
+        Post ≡ { res = Completo?(a) }
+        Complejidad: Θ(n)
+
+    algoritmos:
+        iNil() → res: estr
+            res ← NULL
+
+        iBin(in valor: α, in izq: estr, in der: estr) → res: estr
+            res ← & ⟨valor, izq, der⟩
+
+        iNil?(in a: estr) → res: bool
+            res ← a = NULL
+
+        iRaíz(in a: estr) → res: α
+            res ← (*a).valor
+
+        iIzq(in a: estr) → res: estr
+            res ← (*a).izq
+
+        iDer(in a: estr) → res: estr
+            res ← (*a).der
+
+        iAltura(in e: estr) → res: nat
+            if e = NULL
+                res ← 0
+            else
+                res ← 1 + máx(Altura((*e).izq), Altura((*e).der))
+            end
+
+        iNivelCompleto?(in e: estr, in n: nat) → res: bool
+            if n = 1
+                res ← e ≠ NULL
+            else
+                res ← e ≠ NULL ∧L (NivelCompleto?((*e).izq, n - 1) ∧
+                                   NivelCompleto?((*e).der, n - 1)
+            end
+
+        iCompleto?(in e: estr) → res: bool
+            res ← NivelCompleto?(e, Altura(e))
+
+Fin Interfaz

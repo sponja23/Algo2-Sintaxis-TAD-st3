@@ -1,0 +1,28 @@
+<snippet>
+    <content><![CDATA[
+TAD ${1:Algo}
+
+    géneros: ${2:algo}
+
+    exporta: ${2:algo}, observadores básicos, generadores
+
+    usa: ${3:bool, nat}
+
+    generadores:
+        nuevo${1:Algo}: → ${2:algo}
+
+    observadores básicos:
+        observador: ${2:algo} → bool
+
+    otras operaciones:
+        otraCosa: ${2:algo} × nat → nat
+
+    axiomas:
+        ...
+
+Fin TAD
+]]></content>
+    <tabTrigger>tad</tabTrigger>
+    <scope>source.tad</scope>
+    <description>Esqueleto de TAD</description>
+</snippet>

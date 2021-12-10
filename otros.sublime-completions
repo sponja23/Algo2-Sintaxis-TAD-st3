@@ -1,0 +1,27 @@
+{
+	"scope": "source.tad",
+
+	"completions": [
+		{ "trigger": "ifinline", "contents": "if ${1:condicion} then ${2:valor1} else ${3:valor2} fi" },
+		{ "trigger": "ifthenelsefi", "contents": "if ${1:condicion} then\n\t${2:valor1}\nelse\n\t${3:valor2}\nfi"},
+		{ "trigger": "generadores", "contents": "generadores:\n\tnuevo${1:Algo}: → ${2:algo}" },
+		{ "trigger": "observadores básicos", "contents": "observadores básicos:\n\t${1:observador}: ${2:algo} → ${3:valor}" },
+		{ "trigger": "otras operaciones", "contents": "otras operaciones:\n\t${1:operación}: ${2:algo} → ${3:valor}" },
+		{ "trigger": "exporta", "contents": "exporta: géneros, generadores, observadores básicos, " },
+		{ "trigger": "usa", "contents": "usa: ${1:algo}" },
+		{ "trigger": "igualdad observacional", "contents": "igualdad observacional:\n\t(∀${1:a}₁, ${1:a}₂ : ${2:algo})(${1:a}₁ =obs ${1:a}₂ ⇔ ${3:observador}(${1:a}₁) =obs ${3:observador}(${1:a}₂))" },
+		{ "trigger": "axiomas", "contents": "axiomas:\n\t" },
+		{ "trigger": "representación", "contents": "representación:\n\t${1:algo} se representa con ${2:estr}, donde\n\t\t${2} es tupla⟨\n\t\t\t${3:prop}: ${4:tipo}\n\t\t⟩" },
+		{ "trigger": "invariante", "contents": "invariante de representación:\n\tRep: estr → bool\n\t(∀e: estr) Rep(e) ≡ true ⇔ "},
+		{ "trigger": "abstracción", "contents": "función de abstracción:\n\tAbs: ${3:estr} ${4:e} → ${1:algo} { Rep(${4}) }\n\t(∀${4}: ${3}) Abs(${4}) =obs ${2:a} | ${5:}" },
+		{ "trigger": "interfaces", "contents": "interfaces:\n\t${1:función}(in ${2:arg}: ${3:α}) → res: ${4:β}\n\tPre ≡ { ${5:true} }\n\tPost ≡ { ${6:} }\n\tDescripción: ...\n\tComplejidad: Θ(?)\n\tAliasing: ..." },
+		{ "trigger": "solución informal", "contents": "solución informal:\n\n\t1. "},
+		{ "trigger": "Pre", "contents": "Pre ≡ { ${1:} }" },
+		{ "trigger": "Post", "contents": "Post ≡ { ${1:} }" },
+		{ "trigger": "Descripción", "contents": "Descripción: " },
+		{ "trigger": "Complejidad", "contents": "Complejidad: Θ(${1:})" },
+		{ "trigger": "Aliasing", "contents": "Aliasing: " },
+		{ "trigger": "loop iterador", "contents": "it ← CrearIt(${2:e})\nwhile HaySiguiente?(it)\n\telem ← Siguiente(it)\n\t${1:}\n\tAvanzar(it)\nend" },
+		{ "trigger": "algoritmos", "contents": "algoritmos:\n\tiAlgoritmo(in input: α) → res: β\n\t\tres ← f(input)" }
+	]
+}

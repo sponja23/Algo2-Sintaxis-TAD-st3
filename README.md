@@ -2,24 +2,22 @@
 
 Un paquete de sublime text para escribir los TADs y sus aspectos de diseño.
 
-
 ![Imagen](./imagenes/ejemplo_tad.png)
 
 ![Imagen](./imagenes/ejemplo_design.jpeg)
 
-
 ## Instalación
 
 1. Instalar [Sublime Text 3](https://www.sublimetext.com/3).
-2. Descargar el archivo `Algo2-TADs.sublime-package`.
-3. Ponerlo en la carpeta de Sublime `Installed Packages/`. Está un directorio arriba de la carpeta `Packages/` que se abre cuando usan el menú de Sublime: `Preferences > Browse Packages...`.
+2. Instalar [Package Control](https://packagecontrol.io/installation).
+3. Abrir la consola con `Control+Shift+P`, ejecutar `Package Control: Install Package`, y elijan Algo2-TADs.
 
-Si habían instalado el archivo `tad.tmLanguage` o `TAD.sublime-syntax` en `Packages/User/`, bórrenlo.
+Si lo habían instalado manualmente, borren el archivo `Algo2-TADs.sublime-package` que quedó en la carpeta `Installed Packages/` (está un directorio arriba de la carpeta `Packages/`, que se abre usando el menú de Sublime: `Preferences > Browse Packages...`).
 
 ## Otros Paquetes
 
-* **Símbolos**: Yo uso [`UnicodeMath`](https://github.com/mvoidex/UnicodeMath).
-* **PDF**: Si lo abren en el browser con [`ExportHtml`](https://packagecontrol.io/packages/ExportHtml) pueden imprimirlo para pasarlo a PDF desde ahí (en general con `Control+P`).
+- **Símbolos**: Yo uso [`UnicodeMath`](https://github.com/mvoidex/UnicodeMath).
+- **PDF**: Si lo abren en el browser con [`ExportHtml`](https://packagecontrol.io/packages/ExportHtml) pueden imprimirlo para pasarlo a PDF desde ahí (en general con `Control+P`).
 
 ## Visual Studio Code
 

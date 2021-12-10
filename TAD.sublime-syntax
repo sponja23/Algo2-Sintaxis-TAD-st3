@@ -1,0 +1,567 @@
+%YAML 1.2
+---
+
+file_extensions:
+  - tad
+scope: source.tad
+
+variables:
+  TAD_keyword: (?i)(?:g[ée]neros|usa|importa|exporta|par[aá]metros formales|igualdad observacional|igobs|ig obs|observadores b[áa]sicos|generadores|gen|otras operaciones|otras op|otrasop|axiomas)
+  identifier: \b[[:alpha:]_][[:alnum:]_₁₂₃₄₅₆₇₈₉₀]*
+  function_arrow: '(?:->|→)'
+  function_call_name: '[^⟨\{\|¬∙[:space:]\(\)\.\:\,\[\]​]+'
+  member_name: '[^\(\)[:space:]\.\:\[\]⟨\{\}\,⟩​]+'
+  section_title: (?i)(?:representaci[oó]n|soluci[oó]n informal|invariante de representaci[oó]n|funci[oó]n de abstracci[oó]n|interfaces|algoritmos)
+  interface_keyword: (?i)(?:par[áa]metros formales|g[ée]neros|se explica con|operaciones( b[áa]sicas)?|algoritmos|usa|funciones)
+
+
+contexts:
+  prototype:
+    - include: comments
+
+  main:
+    - include: TAD-definition
+    - include: interface-definition
+    - include: design-sections
+    - include: function-signatures
+    - include: expressions
+
+  type-name: # Matches a single typename
+    - match: '({{identifier}})(\()'
+      captures:
+        1: entity.name.class.tad
+        2: punctuation.section.parens.begin.tad
+      set:
+        - include: type-list
+        - match: (\))
+          scope: punctuation.section.parens.end.tad
+          pop: true
+    - match: '{{identifier}}'
+      scope: entity.name.class.tad
+      pop: true
+
+  type-list:
+    - match: (?={{identifier}})
+      push:
+        - include: type-name
+    - match: \,
+      scope: punctuation.separator.sequence.tad
+
+  design-type-name:
+    - match: '({{identifier}})(\()'
+      captures:
+        1: entity.name.class.tad
+        2: punctuation.section.parens.begin.tad
+      set:
+        - include: design-type-list
+        - match: (\))
+          scope: punctuation.section.parens.end.tad
+          pop: true
+    - match: '({{identifier}})(\[)'
+      captures:
+        1: entity.name.class.tad
+        2: punctuation.section.brackets.begin.tad
+      set:
+        - match: '(\d+)\s*(\.\.+)'
+          captures:
+            1: constant.numeric.tad
+            2: punctuation.separator.tad
+          set:
+            - match: '{{identifier}}'
+              scope: variable.tad
+              set: end-array
+            - match: '\d+'
+              scope: constant.numeric.tad
+              set: end-array
+        - match: \d+
+          scope: constant.numeric.tad
+          set: end-array
+    - match: '({{identifier}})\s*(⟨)'
+      captures:
+        1: entity.name.class.tad
+        2: punctuation.section.mapping.begin.tad
+      set:
+        - include: tuple-type-list
+        - match: (⟩)
+          scope: punctuation.section.mapping.end.tad
+          pop: true
+    - match: '({{identifier}})\s+(de)'
+      captures:
+        1: entity.name.class.tad
+        2: keyword.other.tad
+      set: design-type-name
+    - match: '{{identifier}}'
+      scope: entity.name.class.tad
+      pop: true
+
+  end-array:
+    - match: '\]'
+      scope: punctuation.section.brackets.end
+      set:
+        - match: '(?i)\s+de\s+'
+          scope: keyword.other.tad
+          set: design-type-name
+
+  tuple-type-list:
+    - match: '({{function_call_name}})(:)'
+      captures:
+        1: variable.parameter.tad
+        2: punctuation.separator.mapping.key-value.tad
+      push: design-type-name
+    - match: \,
+      scope: punctuation.separator.mapping.tad
+
+  design-type-list:
+    - match: (?={{identifier}})
+      push:
+        - include: design-type-name
+    - match: \,
+      scope: punctuation.separator.sequence.tad
+
+  export-list:
+    - match: '({{identifier}})\n'
+      captures:
+        1: variable.tad
+      pop: true
+    - match: '{{identifier}}'
+      scope: variable.tad
+    - match: '\,'
+      scope: punctuation.separator.sequence.tad
+
+  function-signatures:
+    - match: '(.+?)\:(?=.*?{{function_arrow}})'
+      captures:
+        1: storage.type.function.tad
+      push: [type-name, function-signature-inputs]
+    - include: restrictions
+
+  function-signature-inputs:
+    - match: (?={{identifier}})
+      push:
+        - include: type-name
+    - match: (×|x)
+      scope: variable.parameter.tad
+    - match: '{{function_arrow}}'
+      scope: variable.parameter.tad
+      pop: true
+
+  interface-functions:
+    - match: '^\s*({{function_call_name}})(\()'
+      captures:
+        1: storage.type.function.tad
+        2: punctuation.section.parens.begin.tad
+      push:
+        - include: interface-function-parameters
+        - match: '(\))\s*({{function_arrow}})\s*({{identifier}})\s*\:'
+          captures:
+            1: punctuation.section.parens.end.tad
+            2: variable.parameter.tad
+            3: variable.tad
+          set: type-name
+        - match: (\))\s*\n
+          captures:
+            1: punctuation.section.parens.end.tad
+          pop: true
+    - match: '(?i)^\s*(complejidad|descripci[óo]n|aliasing)\:'
+      captures:
+        1: variable.annotation.tad
+    - match: (?i)\b(pre|post)\b
+      scope: variable.tad
+      push:
+        - match: '(≡|=) *(\{)'
+          captures:
+            1: keyword.operator.tad
+            2: punctuation.section.braces.begin.tad
+          set: restriction-inside
+
+  interface-function-parameters:
+    - match: (?i)(in\/out|in|out)
+      scope: keyword.other.tad
+      push:
+        - match: '\b({{identifier}})\s*\:'
+          captures:
+            1: variable.tad
+          set: type-name
+    - match: \,
+      scope: punctuation.separator.sequence.tad
+
+  interface-algorithms:
+    - match: '^\s*(i)({{function_call_name}})(\()'
+      captures:
+        1: keyword.other.tad
+        2: storage.type.function.tad
+        3: punctuation.section.parens.begin.tad
+      push:
+        - include: interface-algorithm-parameters
+        - include: interface-algorithm-end
+    - match: '^\s*(func)\s+({{function_call_name}})(\()'
+      captures:
+        1: keyword.other.tad
+        2: storage.type.function.tad
+        3: punctuation.section.parens.begin.tad
+      push:
+        - include: interface-algorithm-parameters
+        - include: interface-algorithm-end
+    - include: algorithm-expressions
+
+  interface-algorithm-end:
+    - match: '(\))\s*({{function_arrow}})\s*({{identifier}})\s*\:'
+      captures:
+        1: punctuation.section.parens.end.tad
+        2: variable.parameter.tad
+        3: variable.tad
+      set: design-type-name
+    - match: (\))\s*\n
+      captures:
+        1: punctuation.section.parens.end.tad
+      pop: true
+
+  interface-algorithm-parameters:
+    - match: (?i)(in\/out|in|out)
+      scope: keyword.other.tad
+      push:
+        - match: '\b({{identifier}})\s*\:'
+          captures:
+            1: variable.tad
+          set: design-type-name
+    - match: \,
+      scope: punctuation.separator.sequence.tad
+
+  restrictions:
+    - match: \{
+      scope: punctuation.section.braces.begin.tad
+      push: restriction-inside
+
+  restriction-inside:
+    - match: \{
+      scope: punctuation.section.braces.begin.tad
+      push: restriction-inside
+    - match: \}
+      scope: punctuation.section.braces.end.tad
+      pop: true
+    - include: expressions
+
+  expressions:
+    - include: footnotes
+    - include: donde
+    - include: eq-obs
+    - include: quantifiers
+    - include: function-calls
+    - include: member-access
+    - include: constants
+    - include: operators
+    - include: strings
+    - include: conditionals
+    - include: variables
+
+  footnotes:
+    - match: (?<=\s|^|\()\(\d+\)(?=\s|$|\))
+      scope: constant.language.tad
+
+  donde:
+    - match: (?i)(donde:?)
+      captures:
+        1: keyword.other.tad
+
+  eq-obs:
+    - match: (?i)\=obs
+      scope: keyword.operator.comparison.tad
+
+  quantifiers:
+    - match: '(\()?(∀|∃)(?=.+?\:)'
+      captures:
+        1: punctuation.section.parens.begin.tad
+        2: keyword.operator.tad
+      push:
+        - match: '\:'
+          scope: keyword.operator.tad
+          set:
+            - match: (?={{identifier}})
+              push: type-name
+            - match: '\,'
+              scope: punctuation.separator.tad
+              pop: true
+            - match: '\)'
+              scope: punctuation.section.parens.end.tad
+              pop: true
+            - match: (?=\n)
+              pop: true
+        - include: variables
+        - match: '\,'
+          scope: punctuation.separator.tad
+
+
+  function-calls:
+    - match: '({{function_call_name}})(?=\(.*?\))'
+      captures:
+        1: storage.type.function.tad
+
+  member-access:
+    - match: \.({{member_name}})
+      captures:
+        1: variable.parameter.tad
+
+  operators:
+    - match: (∙|∘|\+|\-|\*|\/|\^|≤|≥|∪|∩|&|∈|⊂|⊃|⊆|⊇|∧L?|∨L?|¬|:|∄|⇒L?|=>L?|⇐|<=|\[|\]|\=|↔|⟺|⇔|≡|<=>|⇐⇒|→|←|<|>|\||≠|⋅|%|∉)
+      scope: keyword.operator.tad
+
+  strings:
+    - match: '"'
+      scope: punctuation.definition.string.begin.tad
+      push: inside-string
+
+  inside-string:
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.double.tad
+    - match: \\.
+      scope: constant.character.escape.tad
+    - match: '"'
+      scope: punctuation.definition.string.end.tad
+      pop: true
+
+  constants:
+    - match: (?<=\s|\(|\[|⟨|\^|\,)((?:-)?\d+(?:\.\d*)?)(?=\s|\)|\]|⟩|$|\,)
+      captures:
+        1: constant.numeric.tad
+    - match: (?i)\b(true|false|none|∅|Ø|nil|<>|NULL)\b
+      scope: constant.other.tad
+
+  conditionals:
+    - match: (?i)\b(if|else|then|fi|elif)(?=\b)
+      scope: keyword.control.conditional.tad
+
+  variables:
+    - match: '{{identifier}}'
+      scope: variable.tad
+
+  algorithm-expressions:
+    - include: algorithm-keywords
+    - include: var-declarations
+    - include: expressions
+
+  var-declarations:
+    - match: '(?i)\b(var)\s+({{identifier}})(\:)'
+      captures:
+        1: keyword.control.tad
+        2: variable.tad
+        3: punctuation.separator.mapping.tad
+      push: design-type-name
+
+  algorithm-keywords:
+    - match: (?i)\b(mientras|para|si|entonces|while|for|end|switch|case|break|default|return|devolver|do|hacer)\b
+      scope: keyword.control.tad
+
+  TAD-definition:
+    - match: (?i)^\s*(TAD)\s+(?={{identifier}})\b
+      captures:
+        1: keyword.other.tad
+      set: [TAD-definition-after, type-name]
+
+
+  TAD-definition-after:
+    - match: (?i)\b(ES)\s+(?={{identifier}})\b
+      captures:
+        1: keyword.other.tad
+      set: type-name
+    - match: (?i)\b(EXTIENDE)\s+(?={{identifier}})\b
+      captures:
+        1: keyword.other.tad
+      push: type-name
+    - match: (?=[\n:])
+      set:
+        - include: TAD-body
+        - match: (?i)\b(FIN TAD)\b
+          scope: keyword.other.tad
+          pop: true
+
+  TAD-body:
+    - match: (?i)^\s*g[eé]neros:?
+      scope: keyword.other.tad
+      push: TAD-type-section
+    - match: (?i)^\s*axiomas:?
+      scope: keyword.other.tad
+      push: TAD-axioms-first-line
+    - match: (?i)^\s*usa:?
+      scope: keyword.other.tad
+      push: TAD-type-section
+    - match: (?i)^\s*exporta:?
+      scope: keyword.other.tad
+      push: TAD-exports-section
+    - match: (?i)^\s*generadores:?
+      scope: keyword.other.tad
+      push: TAD-signature-section
+    - match: (?i)^\s*observadores b[aá]sicos:?
+      scope: keyword.other.tad
+      push: TAD-signature-section
+    - match: (?i)^\s*otras operaciones:?
+      scope: keyword.other.tad
+      push: TAD-signature-section
+    - match: (?i)^\s*igualdad observacional:?
+      scope: keyword.other.tad
+      push: TAD-expression-section
+    - match: (?i)^\s*par[aá]metros formales:?
+      scope: keyword.other.tad
+      push: TAD-formal-parameters-section
+
+  TAD-section:
+    - match: (?=^\s*{{TAD_keyword}})
+      pop: true
+    - match: (?i)(?=^\s*FIN TAD)
+      pop: true
+
+  TAD-type-section:
+    - include: TAD-section
+    - include: type-list
+
+  TAD-formal-parameters-section:
+    - include: TAD-section
+
+  TAD-exports-section:
+    - include: export-list
+
+  TAD-signature-section:
+    - include: TAD-section
+    - include: function-signatures
+
+  TAD-expression-section:
+    - include: TAD-section
+    - include: expressions
+
+  TAD-axioms-first-line:
+    - include: quantifiers
+    - match: '\n'
+      set: TAD-expression-section
+
+  design-sections:
+    - match: (?i)^\s*representaci[oó]n:?
+      scope: keyword.other.tad
+      push: repr-structure
+    - match: (?i)^\s*invariante de representaci[óo]n:?
+      scope: keyword.other.tad
+      push: rep-invariant
+    - match: (?i)^\s*funci[óo]n de abstracci[óo]n:?
+      scope: keyword.other.tad
+      push: abs-function
+    - match: (?i)^\s*interfaces:?
+      scope: keyword.other.tad
+      push: interface-functions-outside
+    - match: (?i)^\s*algoritmos:?
+      scope: keyword.other.tad
+      push: interface-algorithms-outside
+    - match: (?i)^\s*soluci[óo]n informal:?
+      scope: keyword.other.tad
+      push: informal-solution
+
+  design-section:
+    - match: \b(?={{section_title}})
+      pop: true
+    - match: \b(?i)^\s*(?=tad\s+{{identifier}})
+      pop: true
+    - match: \b(?i)^\s*(?=interfaz)
+      pop: true
+    - match: '\-\-\-'
+      scope: comment.line.tad
+      pop: true
+
+  repr-structure:
+    - include: design-section
+    - include: donde
+    - match: (?i)({{identifier}})\s+(se\s+representa\s+con)\s+(?={{identifier}})
+      captures:
+        1: entity.name.class.tad
+        2: keyword.other.tad
+      push: design-type-name
+    - match: '({{identifier}})\s+(es)\s+'
+      captures:
+        1: entity.name.class.tad
+        2: keyword.other.tad
+      push: design-type-name
+
+  rep-invariant:
+    - include: design-section
+    - include: function-signatures
+    - include: expressions
+
+  abs-function:
+    - include: design-section
+    - include: function-signatures
+    - include: expressions
+
+  interface-functions-outside:
+    - include: design-section
+    - include: interface-functions
+
+  interface-algorithms-outside:
+    - include: design-section
+    - include: interface-algorithms
+
+  informal-solution:
+    - include: design-section
+    - match: '^\s*(\-+\>?|\*|\+|\.|\d+\.)'
+      scope: keyword.other.tad
+
+  interface-definition:
+    - match: (?i)\s*interfaz
+      scope: keyword.other.tad
+      push: interface-body
+
+  interface-body:
+    - match: (?i)\s*par[áa]metros formales:?
+      scope: keyword.other.tad
+      push: interface-formal-parameters-section
+    - match: (?i)\s*se explica con:?
+      scope: keyword.other.tad
+      push: interface-type-section
+    - match: (?i)\s*géneros:?
+      scope: keyword.other.tad
+      push: interface-design-type-section
+    - match: '(?i)\boperaciones(?: b[áa]sicas)?:?'
+      scope: keyword.other.tad
+      push: interface-operations-section
+    - match: (?i)\s*algoritmos:?
+      scope: keyword.other.tad
+      push: interface-algorithms-section
+    - match: (?i)\s*fin interfaz\b
+      scope: keyword.other.tad
+      pop: true
+
+  interface-section:
+    - match: \b(?={{interface_keyword}})
+      pop: true
+    - match: (?i)\b(?=fin interfaz)
+      scope: keyword.other.tad
+      pop: true
+
+  interface-formal-parameters-section:
+    - match: (?i)\s*géneros:?
+      scope: keyword.other.tad
+      push: interface-design-type-section
+    - match: (?i)\s*funciones:?
+      scope: keyword.other.tad
+      push: interface-operations-section
+    - include: interface-section
+
+
+  interface-type-section:
+    - include: interface-section
+    - include: type-list
+
+  interface-design-type-section:
+    - include: interface-section
+    - include: design-type-list
+
+  interface-operations-section:
+    - include: interface-section
+    - include: interface-functions
+
+  interface-algorithms-section:
+    - include: interface-section
+    - include: interface-algorithms
+
+  comments:
+    - match: //
+      scope: punctuation.definition.comment.tad
+      push:
+        - meta_scope: comment.line.double-slash.tad
+        - match: $\n?
+          pop: true

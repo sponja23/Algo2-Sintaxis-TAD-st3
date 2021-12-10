@@ -1,0 +1,36 @@
+<snippet>
+    <content><![CDATA[
+Interfaz
+
+    parámetros formales:
+        géneros: α
+        funciones:
+            copiar(in x: α) → res: bool
+            Pre ≡ { true }
+            Post ≡ { res =obs x }
+            Descripción: Devuelve una copia de x
+            Complejidad: Θ(copiar(x))
+            Aliasing: No presenta aspectos de aliasing
+
+    se explica con: ${1:Algo(α)}
+
+    géneros: ${2}
+
+    operaciones:
+        función(in arg1: α, in/out arg2: algo(α)) → res: bool
+        Pre ≡ { true }
+        Post ≡ { ... }
+        Descripción: ...
+        Complejidad: Θ(...)
+        Aliasing: ...
+
+    algoritmos:
+        iFunción(in arg1: α, in/out arg2: algo(α)) → res: bool
+            ...
+
+Fin Interfaz
+]]></content>
+    <tabTrigger>interfaz</tabTrigger>
+    <scope>source.tad</scope>
+    <description>Esqueleto de Interfaz</description>
+</snippet>

@@ -8,7 +8,7 @@ Un paquete de sublime text para escribir los TADs y sus aspectos de diseño, bas
 
 ## Instalación
 
-1. Instalar [Sublime Text 3](https://www.sublimetext.com/3).
+1. Instalar [Sublime Text](https://www.sublimetext.com/).
 2. Instalar [Package Control](https://packagecontrol.io/installation).
 3. Abrir la consola con `Control+Shift+P`, ejecutar `Package Control: Install Package`, y elegir Algo2-TADs.
 

@@ -16,6 +16,7 @@
 		{ "trigger": "abstracción", "contents": "función de abstracción:\n\tAbs: ${3:estr} ${4:e} → ${1:algo} { Rep(${4}) }\n\t(∀${4}: ${3}) Abs(${4}) =obs ${2:a} | ${5:}" },
 		{ "trigger": "interfaces", "contents": "interfaces:\n\t${1:función}(in ${2:arg}: ${3:α}) → res: ${4:β}\n\tPre ≡ { ${5:true} }\n\tPost ≡ { ${6:} }\n\tDescripción: ...\n\tComplejidad: Θ(?)\n\tAliasing: ..." },
 		{ "trigger": "solución informal", "contents": "solución informal:\n\n\t1. "},
+		{ "trigger": "enunciado", "contents": "enunciado:\n\n\t" },
 		{ "trigger": "Pre", "contents": "Pre ≡ { ${1:} }" },
 		{ "trigger": "Post", "contents": "Post ≡ { ${1:} }" },
 		{ "trigger": "Descripción", "contents": "Descripción: " },

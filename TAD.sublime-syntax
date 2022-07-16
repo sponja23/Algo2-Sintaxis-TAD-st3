@@ -11,7 +11,7 @@ variables:
   function_arrow: '(?:->|→)'
   function_call_name: '[^⟨\{\|¬∙[:space:]\(\)\.\:\,\[\]​]+'
   member_name: '[^\(\)[:space:]\.\:\[\]⟨\{\}\,⟩​]+'
-  section_title: (?i)(?:representaci[oó]n|soluci[oó]n informal|invariante de representaci[oó]n|funci[oó]n de abstracci[oó]n|interfaces|algoritmos)
+  section_title: (?i)(?:representaci[oó]n|soluci[oó]n informal|invariante de representaci[oó]n|funci[oó]n de abstracci[oó]n|interfaces|algoritmos|enunciado)
   interface_keyword: (?i)(?:par[áa]metros formales|g[ée]neros|se explica con|operaciones( b[áa]sicas)?|algoritmos|usa|funciones)
 
 
@@ -451,6 +451,9 @@ contexts:
     - match: (?i)^\s*soluci[óo]n informal:?
       scope: keyword.other.tad
       push: informal-solution
+    - match: (?i)^\s*enunciado:?
+      scope: keyword.other.tad
+      push: problem-statement
 
   design-section:
     - match: \b(?={{section_title}})
@@ -496,6 +499,11 @@ contexts:
     - include: interface-algorithms
 
   informal-solution:
+    - include: design-section
+    - match: '^\s*(\-+\>?|\*|\+|\.|\d+\.)'
+      scope: keyword.other.tad
+
+  problem-statement:
     - include: design-section
     - match: '^\s*(\-+\>?|\*|\+|\.|\d+\.)'
       scope: keyword.other.tad

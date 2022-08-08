@@ -28,7 +28,7 @@ Para escribir símbolos matemáticos, yo uso el paquete [`UnicodeMath`](https://
 
 Para exportar el archivo a PDF, se puede usar el paquete [`ExportHtml`](https://packagecontrol.io/packages/ExportHtml). Con el comando `Control+Shift+P > Export to HTML: Show Export Menu` abren una ventana del browser que descarga el PDF.
 
-Las opciones que vienen por default en el menú de exportar son un poco molestas (el PDF viene con contador de líneas y un header con el nombre de archivo). Para cambiarlas, tienen que agregar una opción nueva con `Control+Shift+P > ExportHtml: Settings`. En el archivo `export-html-settings.json` dejé una configuración para copiar y pegar que agregar una opción de TADs.
+Las opciones que vienen por default en el menú de exportar son un poco molestas (el PDF viene con contador de líneas y un header con el nombre de archivo). Para cambiarlas, tienen que agregar una opción nueva con `Control+Shift+P > ExportHtml: Settings`. En el archivo [`export-html-settings.json`](./export-html-settings.json) dejé una configuración para copiar y pegar que agregar una opción de TADs.
 
 ## Visual Studio Code
 
